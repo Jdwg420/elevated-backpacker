@@ -218,14 +218,14 @@
     <div class="search-container">
         <div class="search-box">
             <input type="text" id="strain-input" placeholder="Enter any cannabis strain (e.g., Blue Dream, Wedding Cake)..." autocomplete="off">
-            <button onclick="matchStrain()">Match Vibe</button>
+            <button id="search-submit-btn">Match Vibe</button>
         </div>
         <div class="quick-tags">
             <span>Popular Strains:</span>
-            <button class="tag-btn" onclick="quickSearch('Blue Dream')">Blue Dream</button>
-            <button class="tag-btn" onclick="quickSearch('Granddaddy Purple')">Granddaddy Purple</button>
-            <button class="tag-btn" onclick="quickSearch('Sour Diesel')">Sour Diesel</button>
-            <button class="tag-btn" onclick="quickSearch('Gelato')">Gelato</button>
+            <button class="tag-btn quick-tag-btn" data-strain="Blue Dream">Blue Dream</button>
+            <button class="tag-btn quick-tag-btn" data-strain="Granddaddy Purple">Granddaddy Purple</button>
+            <button class="tag-btn quick-tag-btn" data-strain="Sour Diesel">Sour Diesel</button>
+            <button class="tag-btn quick-tag-btn" data-strain="Gelato">Gelato</button>
         </div>
     </div>
 
@@ -261,7 +261,6 @@
 </div>
 
 <script>
-    // Curated database
     const database = {
         "blue dream": {
             name: "Blue Dream",
