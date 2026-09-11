@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Elevated Backpacker | Gaming Strain Matcher</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-dark: #1e293b;
+            --primary: #10b981;
+            --primary-hover: #059669;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --sativa: #eab308;
+            --indica: #a855f7;
+            --hybrid: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-bottom: 60px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            margin-top: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .search-container {
+            background: var(--card-dark);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+            border: 1px solid #334155;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            background-color: #0f172a;
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            background-color: var(--primary);
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .quick-tags {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .quick-tags span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .tag-btn {
+            background: #334155;
+            color: var(--text-main);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s;
+        }
+
+        .tag-btn:hover {
+            background: #475569;
+        }
+
+        .result-card {
+            background: var(--card-dark);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #334155;
+            display: none;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .strain-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .type-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-sativa { background-color: rgba(234, 179, 8, 0.2); color: var(--sativa); border: 1px solid var(--sativa); }
+        .badge-indica { background-color: rgba(168, 85, 247, 0.2); color: var(--indica); border: 1px solid var(--indica); }
+        .badge-hybrid { background-color: rgba(16, 185, 129, 0.2); color: var(--hybrid); border: 1px solid var(--hybrid); }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .meta-item h4 {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .vibe-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .vibe-title {
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-note {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>The Elevated Backpacker</h1>
+        <div class="subtitle">Gaming Session Strain & Vibe Matcher</div>
+    </header>
+
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="strain-input" placeholder="Enter any cannabis strain (e.g., Blue Dream, Wedding Cake)..." autocomplete="off">
+            <button onclick="matchStrain()">Match Vibe</button>
+        </div>
+        <div class="quick-tags">
+            <span>Popular Strains:</span>
+            <button class="tag-btn" onclick="quickSearch('Blue Dream')">Blue Dream</button>
+            <button class="tag-btn" onclick="quickSearch('Granddaddy Purple')">Granddaddy Purple</button>
+            <button class="tag-btn" onclick="quickSearch('Sour Diesel')">Sour Diesel</button>
+            <button class="tag-btn" onclick="quickSearch('Gelato')">Gelato</button>
+        </div>
+    </div>
+
+    <div class="result-card" id="result-card">
+        <div class="result-header">
+            <div>
+                <div class="strain-name" id="res-name">Blue Dream</div>
+                <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 2px;" id="res-source">Curated Master Profile</div>
+            </div>
+            <span class="type-badge badge-hybrid" id="res-badge">Hybrid</span>
+        </div>
+
+        <div class="meta-grid">
+            <div class="meta-item">
+                <h4>Dominant Terpenes</h4>
+                <div id="res-terps">Myrcene, Pinene, Caryophyllene</div>
+            </div>
+            <div class="meta-item">
+                <h4>Core Mindset Vibe</h4>
+                <div id="res-effects">Creative, Relaxed, Clear-headed Focus</div>
+            </div>
+        </div>
+
+        <div class="vibe-box">
+            <div class="vibe-title">🎮 Recommended Gaming Genre</div>
+            <p id="res-gaming">Perfect for massive Open-World RPGs (like Elden Ring or Skyrim) and cozy simulation games. Enhances immersion without giving you couch-lock or brain fog.</p>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        Built by The Elevated Backpacker. For entertainment purposes only. Enjoy responsibly.
+    </div>
+</div>
+
+<script>
+    // Curated database
+    const database = {
+        "blue dream": {
+            name: "Blue Dream",
+            type: "hybrid",
+            terpenes: "Myrcene, Pinene, Caryophyllene",
+            effects: "Creative, Uplifting, Mild Relaxation",
+            gaming: "Perfect for massive Open-World RPGs (like Elden Ring, Skyrim, or The Witcher). It completely dials up your environmental immersion while keeping your mental map sharp enough for long questlines."
+        },
+        "granddaddy purple": {
+            name: "Granddaddy Purple",
+            type: "indica",
+            terpenes: "Linalool, Humulene, Myrcene",
+            effects: "Deep Body Buzz, Relaxed, Sleepy",
+            gaming: "Best suited for low-stress Cozy Games (like Stardew Valley, Animal Crossing) or cinematic, story-heavy games where fast reflexes don't matter. Ideal for post-session winding down."
+        },
+        "sour diesel": {
+            name: "Sour Diesel",
+            type: "sativa",
+            terpenes: "Limonene, Caryophyllene, Myrcene",
+            effects: "Energizing, Fast-acting, Mental Euphoria",
+            gaming: "High-octane fuel for Fast FPS Shooters (Call of Duty, Apex Legends, Overwatch) or Racing Games. It locks you into an intense hyper-focused flow state with fast reaction times."
+        },
+        "gelato": {
+            name: "Gelato",
+            type: "hybrid",
+            terpenes: "Caryophyllene, Limonene, Humulene",
+            effects: "Euphoric, Physically Numbing, Social",
+            gaming: "An excellent match for Co-Op Party Games and Multiplayer Madness (Rocket League, Helldivers 2, Mario Kart) with friends. Strikes a perfect balance between high laughs and steady aim."
+        },
+        "green crack": {
+            name: "Green Crack",
+            type: "sativa",
+            terpenes: "Myrcene, Caryophyllene, Limonene",
+            effects: "Laser Sharp Focus, Energetic, Uplifting",
+            gaming: "The ultimate pairing for Strategy & Management Games (Civilization VI, Cities: Skylines, Factorio). Keeps your brain clicking rapidly through complex optimization layouts without fatiguing."
+        },
+        "og kush": {
+            name: "OG Kush",
+            type: "hybrid",
