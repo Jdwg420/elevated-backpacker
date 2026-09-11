@@ -205,6 +205,10 @@
             font-size: 0.8rem;
             margin-top: 40px;
         }
+
+        .matches-list { margin-top: 12px; display:flex; gap:8px; flex-wrap:wrap }
+        .match-btn { background:#0b1220; border:1px solid #334155; padding:6px 10px; border-radius:8px; cursor:pointer; color:var(--text-main) }
+        .hint { color: var(--text-muted); font-size:0.9rem; margin-top:10px }
     </style>
 </head>
 <body>
@@ -227,6 +231,7 @@
             <button class="tag-btn quick-tag-btn" data-strain="Sour Diesel">Sour Diesel</button>
             <button class="tag-btn quick-tag-btn" data-strain="Gelato">Gelato</button>
         </div>
+        <div class="hint">Tip: If a strain isn't found, you'll get close matches or a generic recommendation based on Sativa/Indica/Hybrid.</div>
     </div>
 
     <div class="result-card" id="result-card">
@@ -252,6 +257,7 @@
         <div class="vibe-box">
             <div class="vibe-title">🎮 Recommended Gaming Genre</div>
             <p id="res-gaming">Perfect for massive Open-World RPGs (like Elden Ring or Skyrim) and cozy simulation games. Enhances immersion without giving you couch-lock or brain fog.</p>
+            <div class="matches-list" id="matches-list"></div>
         </div>
     </div>
 
@@ -261,88 +267,242 @@
 </div>
 
 <script>
+    // Embedded database (curated). You can expand this by adding a strains.json and the site will merge it if available.
     const database = {
         "blue dream": {
             name: "Blue Dream",
             type: "hybrid",
             terpenes: "Myrcene, Pinene, Caryophyllene",
             effects: "Creative, Uplifting, Mild Relaxation",
-            gaming: "Perfect for massive Open-World RPGs (like Elden Ring, Skyrim, or The Witcher). It completely dials up your environmental immersion while keeping your mental map sharp enough to navigate complex territories and solve puzzles without brain fog. You'll feel the weight of your character's journey. 🏔️"
+            gaming: "Perfect for massive Open-World RPGs (like Elden Ring, Skyrim, or The Witcher). It dials up environmental immersion while keeping your mental map sharp."
         },
         "granddaddy purple": {
             name: "Granddaddy Purple",
             type: "indica",
             terpenes: "Linalool, Humulene, Myrcene",
             effects: "Deep Body Buzz, Relaxed, Sleepy",
-            gaming: "Best suited for low-stress Cozy Games (like Stardew Valley, Animal Crossing) or cinematic, story-heavy games where fast reflexes don't matter. Ideal for post-session winding down. Your couch becomes a meditation pod. 🛋️"
+            gaming: "Best suited for low-stress Cozy Games (Stardew Valley, Animal Crossing) or cinematic, story-heavy games where reflexes don't matter."
         },
         "sour diesel": {
             name: "Sour Diesel",
             type: "sativa",
             terpenes: "Limonene, Caryophyllene, Myrcene",
             effects: "Energizing, Fast-acting, Mental Euphoria",
-            gaming: "High-octane fuel for Fast FPS Shooters (Call of Duty, Apex Legends, Overwatch) or Racing Games. It locks you into an intense hyper-focused flow state with fast reaction times and perfect aim. You become the gaming chair. ⚡"
+            gaming: "High-octane fuel for Fast FPS Shooters (Call of Duty, Apex Legends) or Racing Games. Locks you into an intense flow state."
         },
         "gelato": {
             name: "Gelato",
             type: "hybrid",
             terpenes: "Caryophyllene, Limonene, Humulene",
             effects: "Euphoric, Physically Numbing, Social",
-            gaming: "An excellent match for Co-Op Party Games and Multiplayer Madness (Rocket League, Helldivers 2, Mario Kart) with friends. Strikes a perfect balance between high laughs and steady gameplay. The vibes hit different. 🎮"
+            gaming: "Excellent for Co-Op Party Games and Multiplayer (Rocket League, Mario Kart). Balances laughs with solid gameplay."
         },
         "green crack": {
             name: "Green Crack",
             type: "sativa",
             terpenes: "Myrcene, Caryophyllene, Limonene",
             effects: "Laser Sharp Focus, Energetic, Uplifting",
-            gaming: "The ultimate pairing for Strategy & Management Games (Civilization VI, Cities: Skylines, Factorio). Keeps your brain clicking rapidly through complex optimization layouts without a single moment of hesitation. Chess meets caffeine. ♟️"
+            gaming: "Great for Strategy & Management Games (Civilization VI, Factorio). Keeps your brain clicking through complex layouts."
         },
         "og kush": {
             name: "OG Kush",
             type: "hybrid",
             terpenes: "Caryophyllene, Limonene, Myrcene",
             effects: "Euphoric, Relaxed, Creative",
-            gaming: "Versatile hybrid energy for Action-Adventure Games (Assassin's Creed, Uncharted). Balances focus with relaxation—you stay sharp but loose enough to enjoy the ride. The gaming sweet spot. 🎯"
+            gaming: "Versatile for Action-Adventure Games (Assassin's Creed). Balances focus with relaxation."
         },
         "wedding cake": {
             name: "Wedding Cake",
             type: "hybrid",
             terpenes: "Caryophyllene, Limonene, Humulene",
             effects: "Relaxed, Happy, Talkative",
-            gaming: "Perfect for Social Multiplayer & Streaming Sessions (Among Us, Jackbox, Fall Guys). The euphoria keeps everyone laughing while smooth gameplay prevents rage quits. Content creation gold. 📺"
+            gaming: "Perfect for Social Multiplayer & Streaming Sessions (Among Us, Jackbox). Keeps things fun without rage-quitting."
         },
         "durban poison": {
             name: "Durban Poison",
             type: "sativa",
             terpenes: "Myrcene, Limonene, Pinene",
             effects: "Energetic, Focused, Uplifting",
-            gaming: "Ideal for Roguelike & Roguelite Games (Hades, Dead Cells, Spelunky). The relentless energy matches the repetitive loops while keeping your mind razor-sharp for split-second decisions. Run after run feels fresh. 🔄"
+            gaming: "Ideal for Roguelike & Roguelite Games (Hades, Dead Cells). Keeps you sharp for split-second decisions."
         },
         "pineapple express": {
             name: "Pineapple Express",
             type: "hybrid",
             terpenes: "Limonene, Myrcene, Caryophyllene",
             effects: "Creative, Energetic, Euphoric",
-            gaming: "Excellent for Puzzle & Adventure Games (Portal 2, Myst, The Witness). The creative boost makes you see solutions from weird angles. Your brain becomes a lateral thinking machine. 🧩"
+            gaming: "Great for Puzzle & Adventure Games (Portal 2). Boosts lateral thinking and creativity."
         },
         "northern lights": {
             name: "Northern Lights",
             type: "indica",
             terpenes: "Myrcene, Pinene, Limonene",
             effects: "Calm, Relaxed, Happy",
-            gaming: "Best for Cinematic Story Games & Visual Novels (The Last of Us, Life is Strange, Hades). You're locked in narrative mode—every dialogue choice feels weighted. Perfect for games you want to *feel*. 🎬"
+            gaming: "Best for Cinematic Story Games & Visual Novels (The Last of Us). Locks you in narrative mode."
         }
     };
 
-    // Search button click handler
-    document.getElementById('search-submit-btn').addEventListener('click', function() {
-        const strainInput = document.getElementById('strain-input').value.trim();
-        if (strainInput) {
-            matchStrain(strainInput);
+    // Generic recommendations by type (used as fallback)
+    const genericByType = {
+        sativa: {
+            terpenes: "Limonene, Terpinolene, Pinene",
+            effects: "Energetic, Uplifted, Focused",
+            gaming: "Fast-paced games: FPS, Racing, Competitive Multiplayer. Keeps reaction times sharp and energy high."
+        },
+        indica: {
+            terpenes: "Myrcene, Linalool, Caryophyllene",
+            effects: "Relaxed, Sedated, Euphoric",
+            gaming: "Cozy or story-driven games, turn-based, or chill multiplayer. Great for winding down sessions."
+        },
+        hybrid: {
+            terpenes: "Caryophyllene, Limonene, Myrcene",
+            effects: "Balanced, Creative, Social",
+            gaming: "Versatile — action-adventure, co-op, or open-world. Blends focus and relaxation."
         }
+    };
+
+    // Try to load a larger strains.json if provided in the repo (optional)
+    fetch('strains.json').then(r => {
+        if (!r.ok) throw new Error('no local strains.json');
+        return r.json();
+    }).then(extra => {
+        // merge keys lower-cased
+        Object.keys(extra).forEach(k => database[k.toLowerCase()] = extra[k]);
+        console.log('Loaded strains.json with', Object.keys(extra).length, 'entries');
+    }).catch(() => {
+        // silent; strains.json is optional
     });
 
-    // Quick tag button click handlers
+    // Utility: normalize input
+    function normalize(s) { return (s || '').toString().trim().toLowerCase(); }
+
+    // Levenshtein distance for fuzzy match
+    function levenshtein(a, b) {
+        if (!a) return b ? b.length : 0;
+        if (!b) return a.length;
+        const m = a.length, n = b.length;
+        const dp = Array.from({length: m+1}, () => new Array(n+1));
+        for (let i=0;i<=m;i++) dp[i][0]=i;
+        for (let j=0;j<=n;j++) dp[0][j]=j;
+        for (let i=1;i<=m;i++){
+            for (let j=1;j<=n;j++){
+                const cost = a[i-1]===b[j-1] ? 0 : 1;
+                dp[i][j] = Math.min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+cost);
+            }
+        }
+        return dp[m][n];
+    }
+
+    // Find close matches from database keys
+    function findClosestMatches(q, limit=6) {
+        q = normalize(q);
+        const keys = Object.keys(database);
+        const scored = keys.map(k => ({k, d: levenshtein(k, q)}));
+        scored.sort((a,b) => a.d - b.d);
+        return scored.slice(0, limit).map(s => ({key: s.k, dist: s.d, name: database[s.k].name || s.k}));
+    }
+
+    // Show result in the UI
+    function showResult(strain) {
+        document.getElementById('res-name').textContent = strain.name || 'Unknown';
+        document.getElementById('res-terps').textContent = strain.terpenes || '—';
+        document.getElementById('res-effects').textContent = strain.effects || '—';
+        document.getElementById('res-gaming').textContent = strain.gaming || genericByType[strain.type]?.gaming || '—';
+
+        const badge = document.getElementById('res-badge');
+        const type = (strain.type || '').toLowerCase();
+        badge.className = `type-badge badge-${type || 'hybrid'}`;
+        badge.textContent = (type || 'HYBRID').toUpperCase();
+
+        document.getElementById('matches-list').innerHTML = '';
+        document.getElementById('result-card').style.display = 'block';
+    }
+
+    // Display close matches as clickable suggestions
+    function showMatches(matches, originalQuery) {
+        const el = document.getElementById('matches-list');
+        el.innerHTML = '';
+        matches.forEach(m => {
+            const btn = document.createElement('button');
+            btn.className = 'match-btn';
+            btn.textContent = m.name || m.key;
+            btn.onclick = () => { document.getElementById('strain-input').value = m.name || m.key; matchStrain(m.name || m.key); }
+            el.appendChild(btn);
+        });
+        if (matches.length === 0) {
+            const p = document.createElement('div');
+            p.style.color = 'var(--text-muted)';
+            p.textContent = `No close matches for "${originalQuery}". Try a different spelling or select a type below for a generic recommendation.`;
+            el.appendChild(p);
+
+            // Offer generic type buttons
+            ['sativa','indica','hybrid'].forEach(t => {
+                const btn = document.createElement('button');
+                btn.className = 'match-btn';
+                btn.textContent = `Show ${t.charAt(0).toUpperCase()+t.slice(1)} recommendation`;
+                btn.onclick = () => {
+                    showResult({name: originalQuery, type: t, terpenes: genericByType[t].terpenes, effects: genericByType[t].effects, gaming: genericByType[t].gaming});
+                };
+                el.appendChild(btn);
+            });
+        }
+    }
+
+    // Main matching function (tries exact, then substring, then fuzzy)
+    function matchStrain(inputName) {
+        const q = normalize(inputName);
+        if (!q) return;
+
+        // Exact match
+        if (database[q]) {
+            showResult(database[q]);
+            return;
+        }
+
+        // Substring search (contains)
+        const contains = Object.keys(database).filter(k => k.includes(q));
+        if (contains.length === 1) {
+            showResult(database[contains[0]]);
+            return;
+        }
+        if (contains.length > 1) {
+            showResult(database[contains[0]]);
+            const matches = contains.map(k => ({key:k, name: database[k].name}));
+            showMatches(matches, inputName);
+            return;
+        }
+
+        // Fuzzy matches
+        const matches = findClosestMatches(q, 6).filter(m => m.dist <= Math.max(2, Math.floor(q.length*0.4)));
+        if (matches.length > 0) {
+            // If the best match is very close, auto-select it
+            if (matches[0].dist === 0 || matches[0].dist <= 1) {
+                showResult(database[matches[0].key]);
+                return;
+            }
+            // otherwise present choices
+            showMatches(matches, inputName);
+            // show first match tentatively
+            showResult(database[matches[0].key]);
+            return;
+        }
+
+        // Not found: present generic recommendations
+        document.getElementById('result-card').style.display = 'block';
+        document.getElementById('res-name').textContent = inputName;
+        document.getElementById('res-terps').textContent = '—';
+        document.getElementById('res-effects').textContent = 'No curated profile available.';
+        document.getElementById('res-gaming').textContent = 'No curated recommendation available. Choose a type below for a generic suggestion.';
+        document.getElementById('res-badge').className = 'type-badge badge-hybrid';
+        document.getElementById('res-badge').textContent = 'UNKNOWN';
+        showMatches([], inputName);
+    }
+
+    // UI bindings
+    document.getElementById('search-submit-btn').addEventListener('click', function() {
+        const strainInput = document.getElementById('strain-input').value.trim();
+        if (strainInput) matchStrain(strainInput);
+    });
+
     document.querySelectorAll('.quick-tag-btn').forEach(button => {
         button.addEventListener('click', function() {
             const strain = this.getAttribute('data-strain');
@@ -351,36 +511,10 @@
         });
     });
 
-    // Function to handle strain matching
-    function matchStrain(strainName) {
-        const strainKey = strainName.toLowerCase();
-        const strain = database[strainKey];
-        
-        if (strain) {
-            // Display the result
-            document.getElementById('res-name').textContent = strain.name;
-            document.getElementById('res-terps').textContent = strain.terpenes;
-            document.getElementById('res-effects').textContent = strain.effects;
-            document.getElementById('res-gaming').textContent = strain.gaming;
-            
-            // Update badge class based on type
-            const badge = document.getElementById('res-badge');
-            badge.className = `type-badge badge-${strain.type}`;
-            badge.textContent = strain.type.toUpperCase();
-            
-            // Show the result card
-            document.getElementById('result-card').style.display = 'block';
-        } else {
-            alert(`Strain "${strainName}" not found in database`);
-        }
-    }
-
-    // Allow Enter key to search
     document.getElementById('strain-input').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            matchStrain(this.value.trim());
-        }
+        if (e.key === 'Enter') matchStrain(this.value.trim());
     });
+
 </script>
 
 </body>
